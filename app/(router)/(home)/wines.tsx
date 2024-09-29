@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StyleSheet, Button } from 'react-native'
 import React, { useState } from 'react'
-import { CameraView, useCameraPermissions } from 'expo-camera'
+import { CameraType, CameraView, useCameraPermissions } from 'expo-camera'
 
 const wines = () => {
   const [facing, setFacing] = useState<CameraType>('back');
