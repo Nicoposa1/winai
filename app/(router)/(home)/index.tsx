@@ -1,14 +1,20 @@
-import { View, Text, StyleSheet, Button, Image, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import Markdown from 'react-native-markdown-display';
+import { ButtomWineColor } from '../../../components/ButtomWineColor';
+import { postContent } from '../../../services/geminiApiServices';
+import { Colors } from '../../../utils/Colors';
+
+
+const windowWidth = Dimensions.get('window').width;
+
 
 export default function Tab() {
   const [image, setImage] = React.useState<string | null>(null);
   const [responseText, setResponseText] = React.useState<string | null>(null);
-  const apiKey = process.env.EXPO_PUBLIC_API_KEY;
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-
+  const [loading, setLoading] = React.useState<boolean>(false);
+  console.log("🚀 ~ Tab ~ loading:", loading)
 
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -23,139 +29,101 @@ export default function Tab() {
     }
   };
 
-  const uploadImage = async (imageUri: string) => {
-    const response = await fetch(imageUri);
-    const blob = await response.blob();
-
-    const mimeType = 'image/jpeg'; // Adjust based on your image type
-
-    const uploadResponse = await fetch(`${apiUrl}/upload/v1beta/files?key=${apiKey}`, {
-      method: 'POST',
-      headers: {
-        'X-Goog-Upload-Protocol': 'resumable',
-        'X-Goog-Upload-Command': 'start',
-        'X-Goog-Upload-Header-Content-Length': blob.size.toString(),
-        'X-Goog-Upload-Header-Content-Type': mimeType,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        file: {
-          display_name: 'uploaded_image',
-        },
-      }),
-    });
-
-    const uploadHeaders = await uploadResponse.headers.get('x-goog-upload-url');
-
-    // Upload the actual image data
-    const uploadUrl = uploadHeaders;
-
-    const finalUploadResponse = await fetch(uploadUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Length': blob.size.toString(),
-        'X-Goog-Upload-Offset': '0',
-        'X-Goog-Upload-Command': 'upload, finalize',
-      },
-      body: blob,
-    });
-
-    const fileInfo = await finalUploadResponse.json();
-    return fileInfo.file.uri; // Return the valid file_uri
+  const handlePostContent = async () => {
+    setLoading(true);
+    await postContent(image, setResponseText); // Llama a la función del servicio
+    setLoading(false);
   };
 
-  const postContent = async () => {
-    if (!image) {
-      return;
-    }
-
-    try {
-      const fileUri = await uploadImage(image); // Ensure this function uploads and returns a valid file URI
-
-      const response = await fetch(`${apiUrl}/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: 'Analyze the provided image. If it shows a wine, provide an extensive and detailed description, including its origin, type (red, white, rosé, etc.), grape variety, vintage, winery, and region. Describe the wine’s flavor profile, such as aroma, taste notes (fruity, earthy, spicy, etc.), and texture. Suggest appropriate food pairings and discuss its aging potential. If possible, mention awards or recognitions the wine has received. If the image does not show a wine, do not return any results and state that the wine cannot be identified.' },
-              {
-                file_data: {
-                  mime_type: 'image/jpeg',
-                  file_uri: fileUri, // Use the valid file_uri
-                }
-              }
-            ]
-          }]
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json(); // Get the error response body
-        console.error('Error response:', errorData);
-        throw new Error(`HTTP error! status: ${response.status}, message: ${errorData.error.message}`);
-      }
-
-      const data = await response.json();
-
-      // Log the generated content
-      console.log('Response:', JSON.stringify(data, null, 2)); // Log the full response
-
-      if (data.candidates && data.candidates.length > 0) {
-        data.candidates.forEach(candidate => {
-          if (candidate.content && candidate.content.parts) {
-            candidate.content.parts.forEach(part => {
-              if (part.text) {
-                console.log('Generated content:', part.text); // Log generated text content
-                setResponseText(part.text);
-              }
-            });
-          }
-        });
-      } else {
-        console.log('No candidates found in the response.');
-      }
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
 
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Tab Home</Text>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
-      {image && (
-        <>
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-          <Button title="Post content" onPress={postContent} />
-        </>
-      )}
-      {responseText && <>
+    <SafeAreaView style={styles.container}>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+
+        {image && (
+          <View style={{ position: 'relative', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
+            <Image source={{ uri: image }} style={styles.image} />
+            {loading && (
+              <View style={styles.overlay}>
+                <ActivityIndicator size="large" color="#ffffff" />
+              </View>
+            )}
+          </View>
+        )}
+        <View style={{ marginTop: 10, flexDirection: 'row', width: '90%', justifyContent: 'space-between' }}>
+          {image && (
+            <ButtomWineColor
+              text="Analizar imagen con IA"
+              onPress={handlePostContent}
+              loading={loading}
+              style={{ width: '48%', marginHorizontal: 10 }} // Ocupa el 50% menos el margen
+            />
+          )}
+          <ButtomWineColor
+            text="Escogé una imagen de tu galería"
+            onPress={pickImage}
+            style={{ width: '48%', marginHorizontal: 10 }} // Ocupa el 50% menos el margen
+          />
+        </View>
+
+
+        <View style={{ marginTop: 10, width: windowWidth * 0.9}}>
+          <ButtomWineColor
+            text="Agregar a bodega"
+            onPress={() => { }}
+          />
+        </View>
+      </View>
+      {responseText && (
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
-          style={{ height: '100%', width: '90%' }}
+          showsVerticalScrollIndicator={false}
+          style={styles.scrollView}
         >
-          <Markdown>
+          <Markdown >
             {responseText}
           </Markdown>
         </ScrollView>
-      </>}
-    </View>
-
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // Ocupa toda la pantalla
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: Colors.secondary,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: windowWidth * 0.9, // 90% del ancho de la pantalla
+    height: windowWidth * 0.9, // Mantén proporción cuadrada
+    borderRadius: 10,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Cambia la opacidad y el color según tus necesidades
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
+  scrollView: {
+    flex: 1, // Asegura que el ScrollView ocupe el espacio restante
+    width: '90%',
+    marginTop: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    padding: 5,
+    marginBottom: 10,
+  },
+  markdown: {
+    paddingBottom: 20,
+    color: Colors.grayDark,
   },
 });

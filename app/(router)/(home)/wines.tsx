@@ -7,12 +7,10 @@ const wines = () => {
   const [permission, requestPermission] = useCameraPermissions();
 
   if (!permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View style={styles.container}>
         <Text style={styles.message}>We need your permission to show the camera</Text>
@@ -27,9 +25,6 @@ const wines = () => {
   return (
     <View style={styles.container}>
       <CameraView style={styles.camera} facing={facing}
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr"],
-        }}
       >
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
