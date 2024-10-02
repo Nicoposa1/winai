@@ -39,10 +39,9 @@ export default function Tab() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-
+      <View style={{  alignItems: 'center' }}>
         {image && (
-          <View style={{ position: 'relative', justifyContent: 'center', width: '100%', alignItems: 'center' }}>
+          <View style={{  justifyContent: 'center', width: '100%', alignItems: 'center' }}>
             <Image source={{ uri: image }} style={styles.image} />
             {loading && (
               <View style={styles.overlay}>
@@ -67,24 +66,35 @@ export default function Tab() {
           />
         </View>
 
-
-        <View style={{ marginTop: 10, width: windowWidth * 0.9}}>
-          <ButtomWineColor
-            text="Agregar a bodega"
-            onPress={() => { }}
-          />
-        </View>
+        {image && (
+          <View style={{ marginTop: 10, width: windowWidth * 0.9 }}>
+            <ButtomWineColor
+              text="Agregar a bodega"
+              onPress={() => { }}
+            />
+          </View>
+        )}
       </View>
       {responseText && (
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          showsVerticalScrollIndicator={false}
-          style={styles.scrollView}
+        <View
+          style={{
+            width: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: Dimensions.get('window').height * 0.3,
+          }}
         >
-          <Markdown >
-            {responseText}
-          </Markdown>
-        </ScrollView>
+
+          <ScrollView
+            contentInsetAdjustmentBehavior="automatic"
+            showsVerticalScrollIndicator={false}
+            style={styles.scrollView}
+          >
+            <Markdown >
+              {responseText}
+            </Markdown>
+          </ScrollView>
+        </View>
       )}
     </SafeAreaView>
   );
@@ -93,7 +103,6 @@ export default function Tab() {
 const styles = StyleSheet.create({
   container: {
     flex: 1, // Ocupa toda la pantalla
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: Colors.secondary,
   },
