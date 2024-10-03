@@ -5,28 +5,11 @@ import Markdown from 'react-native-markdown-display';
 import { ButtomWineColor } from '../../../components/ButtomWineColor';
 import { postContent } from '../../../services/geminiApiServices';
 import { Colors } from '../../../utils/Colors';
+import { useSelector } from 'react-redux';
 
 export default function Tab() {
-  const mockData = [
-    {
-      id: 1,
-      name: 'Wine 1',
-      image: 'https://via.placeholder.com/150',
-      description: 'This is a description of wine 1',
-    },
-    {
-      id: 2,
-      name: 'Wine 2',
-      image: 'https://via.placeholder.com/150',
-      description: 'This is a description of wine 2',
-    },
-    {
-      id: 3,
-      name: 'Wine 3',
-      image: 'https://via.placeholder.com/150',
-      description: 'This is a description of wine 3',
-    },
-  ]
+  const { wines } = useSelector((state) => state.wine);
+  console.log("🚀 ~ Tab ~ wines:", wines)
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -39,15 +22,20 @@ export default function Tab() {
       >
 
         <FlatList
-          data={mockData}
+          data={wines}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           style={{ width: '100%', padding: 10, }}
           renderItem={({ item }) => (
             <View style={styles.item}>
               <Image source={{ uri: item.image }} style={styles.image} />
-              <Text style={{ marginTop: 10, color: 'black' }} >{item.name}</Text>
-              <Markdown>{item.description}</Markdown>
+              <Text style={{ marginTop: 10, color: 'black', textAlign: 'center', fontWeight: '700' }} >{item.name}</Text>
+              <Markdown>{item.description
+                .replace(/\n/g, ' ')
+                .split(' ')
+                .slice(0, 9)
+                .join(' ')
+                .concat('...')}</Markdown>
             </View>
           )}
         />
@@ -72,6 +60,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     maxWidth: 175,
+    maxHeight: 300,
   },
   image: {
     width: 150,

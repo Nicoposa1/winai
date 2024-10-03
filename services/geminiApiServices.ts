@@ -61,7 +61,7 @@ export const postContent = async (image: string, setResponseText: (text: string)
       body: JSON.stringify({
         contents: [{
           parts: [
-            { text: 'Analyze the provided image. If it shows a wine, provide an extensive and detailed description, including its origin, type (red, white, rosé, etc.), grape variety, vintage, winery, and region. Describe the wine’s flavor profile, such as aroma, taste notes (fruity, earthy, spicy, etc.), and texture. Suggest appropriate food pairings and discuss its aging potential. If possible, mention awards or recognitions the wine has received. If the image does not show a wine, do not return any results and state that the wine cannot be identified.' },
+            { text: 'Analyze the provided image. If it shows a wine, provide an extensive and detailed description, including its origin, type (red, white, rosé, etc.), grape variety, vintage, winery, and region. Describe the wine’s flavor profile, such as aroma, taste notes (fruity, earthy, spicy, etc.), and texture. Suggest appropriate food pairings and discuss its aging potential. If possible, mention awards or recognitions the wine has received. If the image does not show a wine, do not return any results and state that the wine cannot be identified. mark the name in bold' },
             {
               file_data: {
                 mime_type: 'image/jpeg',
