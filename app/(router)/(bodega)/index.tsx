@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Image, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, SafeAreaView, FlatList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import Markdown from 'react-native-markdown-display';
@@ -6,10 +6,10 @@ import { ButtomWineColor } from '../../../components/ButtomWineColor';
 import { postContent } from '../../../services/geminiApiServices';
 import { Colors } from '../../../utils/Colors';
 import { useSelector } from 'react-redux';
+import { Wine } from '../../../interface/wine';
 
 export default function Tab() {
-  const { wines } = useSelector((state) => state.wine);
-  console.log("🚀 ~ Tab ~ wines:", wines)
+  const { wines } = useSelector((state: { wine: { wines: Wine[] } }) => state.wine);
   return (
     <SafeAreaView style={styles.container}>
       <View

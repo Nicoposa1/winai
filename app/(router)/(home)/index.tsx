@@ -7,6 +7,7 @@ import { postContent } from '../../../services/geminiApiServices';
 import { Colors } from '../../../utils/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { addWine, setWine, setWines } from '../../../store/slice/wineSlice';
+import { Wine } from '../../../interface/wine';
 
 const windowWidth = Dimensions.get('window').width;
 const imageSize = windowWidth * 0.9;
@@ -17,7 +18,7 @@ export default function Tab() {
   const [responseText, setResponseText] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [wineName, setWineName] = React.useState('');
-  const { wine } = useSelector((state) => state.wine);
+  const { wine } = useSelector((state: { wine: { wine: Wine } }) => state.wine);
   console.log("🚀 ~ Tab ~ wine:", wine)
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
