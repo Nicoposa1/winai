@@ -8,9 +8,15 @@ import { Colors } from '../../../utils/Colors';
 import { useDispatch, useSelector } from 'react-redux';
 import { addWine, setWine, setWines } from '../../../store/slice/wineSlice';
 import { Wine } from '../../../interface/wine';
+import { CarouselComponent } from '../../../components/Carousel';
 
 const windowWidth = Dimensions.get('window').width;
 const imageSize = windowWidth * 0.9;
+const carouselImages = [
+  { id: '1', url: 'https://via.placeholder.com/600x400/FF0000/FFFFFF?text=Image1' },
+  { id: '2', url: 'https://via.placeholder.com/600x400/00FF00/FFFFFF?text=Image2' },
+  { id: '3', url: 'https://via.placeholder.com/600x400/0000FF/FFFFFF?text=Image3' },
+];
 
 export default function Tab() {
   const dispatch = useDispatch();
@@ -19,6 +25,23 @@ export default function Tab() {
   const [loading, setLoading] = React.useState<boolean>(false);
   const [wineName, setWineName] = React.useState('');
   const { wine } = useSelector((state: { wine: { wine: Wine } }) => state.wine);
+
+
+  const carouselRef = React.useRef(null);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      const nextIndex = (activeIndex + 1) % carouselImages.length;
+      setActiveIndex(nextIndex);
+      carouselRef.current.snapToItem(nextIndex);
+    }, 3000); // Cambia cada 3 segundos
+
+    return () => clearInterval(intervalId); // Limpia el intervalo al desmontar el componente
+  }, [activeIndex]);
+
+
+
   console.log("🚀 ~ Tab ~ wine:", wine)
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -103,6 +126,8 @@ export default function Tab() {
             )}
           </View>
         )}
+
+        
         <View style={{ marginTop: 10, flexDirection: 'row', width: '90%', justifyContent: 'space-between' }}>
           {image && (
             <ButtomWineColor
@@ -118,6 +143,11 @@ export default function Tab() {
             style={{ width: '48%', marginHorizontal: 10 }}
           />
         </View>
+
+
+        <CarouselComponent
+          data={carouselImages}
+        />
 
         {image && (
           <View style={{ marginTop: 10, width: windowWidth * 0.9 }}>
