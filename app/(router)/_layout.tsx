@@ -1,6 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { Colors } from '../../utils/Colors';
 
@@ -20,7 +21,7 @@ export default function TabLayout() {
       initialRouteName='(home)'
     >
       <Tabs.Screen
-        name="(home)"
+        name="(ahome)"
         options={{
           title: 'Home',
           tabBarIcon: ({ color }) => <FontAwesome5 name="wine-glass" size={24} color={color} />,
@@ -32,6 +33,14 @@ export default function TabLayout() {
         options={{
           title: 'Bodega',
           tabBarIcon: ({ color }) => <FontAwesome6 name="wine-bottle" size={24} color={color} />,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="(scanner)"
+        options={{
+          title: 'Scanner AI',
+          tabBarIcon: ({ color }) => <AntDesign name="scan1" size={24} color={color} />,
           headerShown: false,
         }}
       />

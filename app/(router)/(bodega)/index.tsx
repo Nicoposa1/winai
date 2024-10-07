@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, SafeAreaView, FlatList, TextInput, Dimensions } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import Markdown from 'react-native-markdown-display';
@@ -20,7 +20,18 @@ export default function Tab() {
           backgroundColor: Colors.secondary,
         }}
       >
-
+        <TextInput
+          placeholder='Buscar vino en bodega'
+          style={{
+            width: Dimensions.get('window').width * 0.9,
+            height: 50,
+            padding: 10,
+            backgroundColor: Colors.nonary,
+            borderRadius: 10,
+            marginBottom: 10,
+          }}
+          placeholderTextColor={Colors.gray}
+        />
         <FlatList
           data={wines}
           keyExtractor={(item) => item.id.toString()}
