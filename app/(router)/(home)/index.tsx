@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Image, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator, Dimensions, Animated } from 'react-native';
+import { View, Text, StyleSheet, Button, Image, ScrollView, TouchableOpacity, SafeAreaView, ActivityIndicator, Dimensions, Animated, FlatList } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
 import Markdown from 'react-native-markdown-display';
@@ -83,73 +83,170 @@ export default function Tab() {
   }, [loading]);
 
 
+  // create mock data with 10 wines to show in the list and phto to show in the image
+  const mockWines = [
+    {
+      id: 1,
+      name: 'Wine 1',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 1',
+    },
+    {
+      id: 2,
+      name: 'Wine 2',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 2',
+    },
+    {
+      id: 3,
+      name: 'Wine 3',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 3',
+    },
+    {
+      id: 4,
+      name: 'Wine 4',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 4',
+    },
+    {
+      id: 5,
+      name: 'Wine 5',
+      image: 'https://via.placeholder.com/150',
+      description: "This is the description of the wine 5",
+    },
+    {
+      id: 6,
+      name: 'Wine 6',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 6',
+    },
+    {
+      id: 7,
+      name: 'Wine 7',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 7',
+    },
+    {
+      id: 8,
+      name: 'Wine 8',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 8',
+    },
+    {
+      id: 9,
+      name: 'Wine 9',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 9',
+    },
+    {
+      id: 10,
+      name: 'Wine 10',
+      image: 'https://via.placeholder.com/150',
+      description: 'This is the description of the wine 10',
+    },
+  ];
+
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ alignItems: 'center' }}>
-        {image && (
-          <View style={{ justifyContent: 'center', width: '100%', alignItems: 'center' }}>
-            <Image source={{ uri: image }} style={styles.image} />
-            {loading && (
-              <View style={styles.overlay}>
-                <Animated.View
-                  style={[
-                    styles.scanLine,
-                    {
-                      transform: [{ translateY: scanLinePosition }],
-                    },
-                  ]}
-                />
-              </View>
-            )}
-          </View>
-        )}
-        <View style={{ marginTop: 10, flexDirection: 'row', width: '90%', justifyContent: 'space-between' }}>
-          {image && (
-            <ButtomWineColor
-              text="Analizar imagen con IA"
-              onPress={handlePostContent}
-              loading={loading}
-              style={{ width: '48%', marginHorizontal: 10 }}
-            />
-          )}
-          <ButtomWineColor
-            text="Escogé una imagen de tu galería"
-            onPress={pickImage}
-            style={{ width: '48%', marginHorizontal: 10 }}
-          />
-        </View>
+      <ScrollView>
 
-        {image && (
-          <View style={{ marginTop: 10, width: windowWidth * 0.9 }}>
-            <ButtomWineColor
-              text="Agregar a bodega"
-              onPress={() => {
-                dispatchWine();
-              }}
-            />
-          </View>
-        )}
-      </View>
-      {responseText && (
-        <View
+        <Text
           style={{
-            width: '100%',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: Dimensions.get('window').height * 0.3,
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: Colors.carbonGray,
+            marginVertical: 10,
+            textAlign: 'left',
+            marginLeft: 10,
           }}
         >
-          <ScrollView
-            contentInsetAdjustmentBehavior="automatic"
-            showsVerticalScrollIndicator={false}
-            style={styles.scrollView}
-          >
-            <Markdown >
-              {responseText}
-            </Markdown>
-          </ScrollView>
+          Wine
+        </Text>
+        <FlatList
+          data={mockWines}
+          keyExtractor={(item) => item.id.toString()}
+          horizontal={true}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                // dispatch(setWine(item));
+              }}
+            >
+              <View style={{ margin: 10 }}>
+                <Image source={{ uri: item.image }} style={{ width: 200, height: 150, borderRadius: 10 }} />
+                <Text style={{ color: Colors.carbonGray, marginTop: 5, textAlign: 'center' }}>{item.name}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+        <View style={{ alignItems: 'center' }}>
+          {image && (
+            <View style={{ justifyContent: 'center', width: '100%', alignItems: 'center' }}>
+              <Image source={{ uri: image }} style={styles.image} />
+              {loading && (
+                <View style={styles.overlay}>
+                  <Animated.View
+                    style={[
+                      styles.scanLine,
+                      {
+                        transform: [{ translateY: scanLinePosition }],
+                      },
+                    ]}
+                  />
+                </View>
+              )}
+            </View>
+          )}
+          <View style={{ marginTop: 10, flexDirection: 'row', width: '90%', justifyContent: 'space-between' }}>
+            {image && (
+              <ButtomWineColor
+                text="Analizar imagen con IA"
+                onPress={handlePostContent}
+                loading={loading}
+                style={{ width: '48%', marginHorizontal: 10 }}
+              />
+            )}
+            <ButtomWineColor
+              text="Escogé una imagen de tu galería"
+              onPress={pickImage}
+              style={{ width: '48%', marginHorizontal: 10 }}
+            />
+          </View>
+
+          {image && (
+            <View style={{ marginTop: 10, width: windowWidth * 0.9 }}>
+              <ButtomWineColor
+                text="Agregar a bodega"
+                onPress={() => {
+                  dispatchWine();
+                }}
+              />
+            </View>
+          )}
         </View>
-      )}
+        {responseText && (
+          <View
+            style={{
+              width: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: Dimensions.get('window').height * 0.3,
+            }}
+          >
+            <ScrollView
+              contentInsetAdjustmentBehavior="automatic"
+              showsVerticalScrollIndicator={false}
+              style={styles.scrollView}
+            >
+              <Markdown >
+                {responseText}
+              </Markdown>
+            </ScrollView>
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 }
